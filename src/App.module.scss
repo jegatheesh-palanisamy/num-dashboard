@@ -1,0 +1,113 @@
+$statistics-background-color: #2588bd;
+
+$input-background-color: #fff;
+
+$control-area-background: #000;
+
+$submit-button-background: #fccc73;
+$submit-button-color: #fff;
+
+$dataset-button-background: #f7a916;
+$dataset-button-active-background: #2588bd;
+$dataset-button-color: #fff;
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  .statistics {
+    background-color: $statistics-background-color;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  
+    .statisticsSpace {
+      margin: 0.5rem;
+    }
+  }
+  
+  .control {
+    background-color: $control-area-background;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 2rem;
+  
+    .inputContainer {
+      display: flex;
+      margin: 0.5rem;
+      input {
+        background-color: $input-background-color;
+        border-top-left-radius: 0.5rem;
+        border-bottom-left-radius: 0.5rem;
+        border: none;
+        padding: 0.75rem;
+        font-size: 1rem;
+        text-align: center;
+        &::placeholder {
+          color: $submit-button-background;
+          opacity: 1;
+          font-weight: bold;
+          letter-spacing: 1px;
+        }
+        
+        &:-ms-input-placeholder {
+          color: $submit-button-background;
+          font-weight: bold;
+          letter-spacing: 1px;
+        }
+        
+        &::-ms-input-placeholder {
+          color: $submit-button-background;
+          font-weight: bold;
+          letter-spacing: 1px;
+        }
+      }
+      .submitBtn {
+        cursor: pointer;
+        background-color: $submit-button-background;
+        border: none;
+        color: $submit-button-color;
+        font-weight: bold;
+        padding: 0 1.5rem;
+        border-top-right-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+      }
+    }
+
+    .changeBtn {
+      cursor: pointer;
+      background-color: $dataset-button-background;
+      border-radius: 2rem;
+      padding: 0.75rem;
+      border: none;
+      color: $dataset-button-color;
+      font-weight: bold;
+      margin: 1rem 0.5rem;
+
+      &.active {
+        background-color: $dataset-button-active-background;
+      }
+    }
+  }
+}  
+
+.loaderContainer {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(#2588bd, 0.5);
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+

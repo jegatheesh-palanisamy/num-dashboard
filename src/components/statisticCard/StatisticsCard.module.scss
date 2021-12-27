@@ -1,0 +1,31 @@
+$statistics-card-background: #1d6281;
+$statistics-card-border-color: #21759f;
+$label-color: #2486bb;
+$value-color: #fff;
+
+.container {
+  border-radius: 50%;
+  height: 10rem;
+  width: 10rem;
+  background-color: $statistics-card-background;
+  border: 0.25rem solid $statistics-card-border-color;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+
+  .label {
+    color: $label-color;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .value {
+    font-size: 1.125rem;
+    color: $value-color;
+    max-width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
