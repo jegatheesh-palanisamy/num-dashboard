@@ -1,20 +1,20 @@
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
+import { AxiosError } from 'axios';
 
 import StatisticCard from './components/statisticCard';
 import { fetchDataSetByIndex } from './service';
 
 import styles from './App.module.scss';
-import { AxiosError } from 'axios';
 
-const useAsyncReq:
-  <resultType>(...args: any[]) => [
-    ((...args: any[]) => Promise<void>),
+const useAsyncReq: <resultType>(
+  ...args: any[]
+) => [
+    (...args: any[]) => Promise<void>,
     boolean,
     resultType | undefined,
     AxiosError | null,
     Dispatch<SetStateAction<resultType | null>>
-  ]
-  = (apiReq: (...args: any[]) => Promise<any>) => {
+  ] = (apiReq: (...args: any[]) => Promise<any>) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [result, setResult] = useState<any>();
     const [error, setError] = useState<AxiosError | null>(null);
@@ -28,13 +28,14 @@ const useAsyncReq:
         setError(e as AxiosError);
         setLoading(false);
       }
-    }
+    };
     return [asyncReq, loading, result, error, setResult];
-  }
+  };
 
 function App() {
   const defaultDatasetVal = useRef<number[]>([]);
-  const [fetchDatasetReq, loading, dataSet = defaultDatasetVal.current, error, setDataset] = useAsyncReq<number[]>(fetchDataSetByIndex);
+  const [fetchDatasetReq, loading, dataSet = defaultDatasetVal.current, error, setDataset] =
+    useAsyncReq<number[]>(fetchDataSetByIndex);
   const [inputVal, setInputVal] = useState('');
   const [datasetIndex, setDatasetIndex] = useState(0);
 
@@ -47,24 +48,29 @@ function App() {
     if (e.key === 'Enter') {
       addNumberToDataset();
     }
-  }
+  };
 
   const addNumberToDataset = () => {
     if (inputVal) {
       setDataset([...dataSet, Number(inputVal)]);
       setInputVal('');
     }
-  }
+  };
 
   const onInputvalChange = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
     if (!isNaN(Number(value))) {
       setInputVal(value);
     }
-  }
+  };
 
-  const [mean, median, sd, mode] = useMemo(() => {
+  const statistics = useMemo(() => {
     if (!dataSet?.length) {
-      return [0, 0, 0, 0];
+      return [
+        { label: 'Mean', value: 0 },
+        { label: 'Median', value: 0 },
+        { label: 'Std Deviation', value: 0 },
+        { label: 'Mode', value: 0 }
+      ];
     }
     const occuranceMap: { [key: number]: number } = {};
     let sum = 0;
@@ -75,15 +81,17 @@ function App() {
     const sorted = dataSet.sort((a, b) => a - b);
     const length = dataSet.length;
     const mean = sum / length;
-    const mode = Object.keys(occuranceMap).reduce((a, b) => (occuranceMap as any)[b] > (occuranceMap as any)[a] ? b : a)
+    const mode = Object.keys(occuranceMap).reduce((a, b) =>
+      (occuranceMap as any)[b] > (occuranceMap as any)[a] ? b : a
+    );
     const median = (sorted[Math.ceil(length / 2)] + sorted[Math.floor(length / 2)]) / 2;
     const sd = Math.sqrt(dataSet.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / length);
     return [
-      mean.toFixed(6),
-      median.toFixed(6),
-      sd.toFixed(6),
-      Number(mode).toFixed(6),
-    ]
+      { label: 'Mean', value: mean.toFixed(6) },
+      { label: 'Median', value: median.toFixed(6) },
+      { label: 'Std Deviation', value: sd.toFixed(6) },
+      { label: 'Mode', value: Number(mode).toFixed(6) }
+    ];
   }, [dataSet]);
 
   useEffect(() => {
@@ -95,31 +103,45 @@ function App() {
     if (error) {
       window.alert((error as any).message);
     }
-  }, [error])
+  }, [error]);
 
   return (
     <div className={styles.dashboard}>
       <div className={styles.statistics}>
-        <StatisticCard value={mean} label='Mean' className={styles.statisticsSpace} />
-        <StatisticCard value={mode} label='Mode' className={styles.statisticsSpace} />
-        <StatisticCard value={sd} label='Std Deviation' className={styles.statisticsSpace} />
-        <StatisticCard value={median} label='Median' className={styles.statisticsSpace} />
+        {statistics.map(({ label, value }, i) => (
+          <StatisticCard key={label} value={value} label={label} className={styles.statisticsSpace} />
+        ))}
       </div>
       <div className={styles.control}>
         <div className={styles.inputContainer}>
-          <input value={inputVal} type='text' placeholder='Enter Number' onChange={onInputvalChange} onKeyPress={submitIfPressedEnter} />
-          <button className={styles.submitBtn} onClick={addNumberToDataset}>Submit</button>
+          <input
+            value={inputVal}
+            type='text'
+            placeholder='Enter Number'
+            onChange={onInputvalChange}
+            onKeyPress={submitIfPressedEnter}
+          />
+          <button className={styles.submitBtn} onClick={addNumberToDataset}>
+            Submit
+          </button>
         </div>
         <div>
           {[0, 1, 2].map((i) => (
-            <button className={`${styles.changeBtn} ${i === datasetIndex ? styles.active : ''}`} onClick={() => handleDataSetSelect(i)}>Dataset {i + 1}</button>
+            <button
+              key={`button_${i}`}
+              className={`${styles.changeBtn} ${i === datasetIndex ? styles.active : ''}`}
+              onClick={() => handleDataSetSelect(i)}
+            >
+              Dataset {i + 1}
+            </button>
           ))}
         </div>
       </div>
-      {loading &&
+      {loading && (
         <div className={styles.loaderContainer}>
           <div>Loading...</div>
-        </div>}
+        </div>
+      )}
     </div>
   );
 }

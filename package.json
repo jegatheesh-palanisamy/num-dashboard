@@ -42,6 +42,9 @@
     ]
   },
   "devDependencies": {
-    "sass": "^1.43.2"
+    "sass": "^1.43.2",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-react": "^4.1.0"
   }
 }
